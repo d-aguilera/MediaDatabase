@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="a0203c9b3bb14a019aaae337df0e80fc" Name="MediaDatabaseDiagram" >
+        <EntityTypeShape EntityType="MediaDatabase.Model.ContentFile" Width="1.5" PointX="9.75" PointY="2.25" />
+        <EntityTypeShape EntityType="MediaDatabase.Model.Content" Width="1.5" PointX="12" PointY="2.5" />
+        <EntityTypeShape EntityType="MediaDatabase.Model.IgnoredFolder" Width="1.5" PointX="7.5" PointY="5.5" />
+        <EntityTypeShape EntityType="MediaDatabase.Model.Medium" Width="1.5" PointX="3" PointY="2.5" />
+        <EntityTypeShape EntityType="MediaDatabase.Model.MediaType" Width="1.5" PointX="0.75" PointY="2.875" />
+        <EntityTypeShape EntityType="MediaDatabase.Model.Partition" Width="1.5" PointX="5.25" PointY="2.5" />
+        <EntityTypeShape EntityType="MediaDatabase.Model.ScanRequest" Width="1.5" PointX="0.75" PointY="5.75" />
+        <EntityTypeShape EntityType="MediaDatabase.Model.Volume" Width="1.5" PointX="7.5" PointY="2.375" />
+        <AssociationConnector Association="MediaDatabase.Model.FK_ContentFiles_Contents" />
+        <AssociationConnector Association="MediaDatabase.Model.FK_ContentFiles_Volumes" />
+        <AssociationConnector Association="MediaDatabase.Model.FK_IgnoredFolders_Volumes" />
+        <AssociationConnector Association="MediaDatabase.Model.FK_Media_MediaTypes" />
+        <AssociationConnector Association="MediaDatabase.Model.FK_Partitions_Media" />
+        <AssociationConnector Association="MediaDatabase.Model.FK_Volumes_Partitions" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,63 @@
+﻿@using MediaDatabase.Web.Models
+@model ContentFilesModel
+@{
+    ViewBag.Title = "Content";
+
+    var header = Model.ContentFiles.FirstOrDefault();
+}
+<h2>@ViewBag.Title of @Html.DropDownList("VolumeId", Model.Volumes) @Html.TextBoxFor(model => Model.Search) <a href="#" onclick="refresh()">Refresh</a></h2>
+<a href="#" onclick="previous()">Previous</a>
+<a href="#" onclick="next()">Next</a>
+<table class="table">
+    <tr>
+        <th>@Html.DisplayNameFor(o => header.CompactPath)</th>
+        <th>@Html.DisplayNameFor(o => header.Name)</th>
+        <th>@Html.DisplayNameFor(o => header.CreationTimeUtc)</th>
+        <th>@Html.DisplayNameFor(o => header.LastWriteTimeUtc)</th>
+        <th></th>
+    </tr>
+@foreach (var item in Model.ContentFiles) {
+    <tr>
+        <td data-toggle="tooltip" title="@item.Path">@Html.DisplayFor(o => item.CompactPath)</td>
+        <td>@Html.DisplayFor(o => item.Name)</td>
+        <td data-toggle="tooltip" title="@item.CreationTimeUtc">@Html.DisplayFor(o => item.CreationTimeUtc)</td>
+        <td data-toggle="tooltip" title="@item.LastWriteTimeUtc">@Html.DisplayFor(o => item.LastWriteTimeUtc)</td>
+        <td>@Html.ActionLink("Details", "Details", new { id=item.Id })</td>
+    </tr>
+}
+</table>
+<a href="#" onclick="previous()">Previous</a>
+<a href="#" onclick="next()">Next</a>
+@section styles {
+<style>
+    select {
+        max-width: none;
+    }
+</style>
+}
+@section scripts {
+@Scripts.Render("~/Scripts/moment.js")
+<script type="text/javascript">
+    function refresh(page) {
+        var query = [];
+        var volumeId = document.getElementById('VolumeId').value;
+        if (volumeId > 0)
+            query.push("vid=" + volumeId);
+        if (page)
+            query.push("p=" + page);
+        var search = document.getElementById('Search').value;
+        if (search)
+            query.push("search=" + search);
+        var url = '@Url.Action("Index")';
+        if (query.length)
+            url += '?' + query.join('&');
+        window.location.href = url;
+    }
+    function previous() {
+        refresh(@(Model.Page - 1));
+    }
+    function next() {
+        refresh(@(Model.Page + 1));
+    }
+</script>
+}

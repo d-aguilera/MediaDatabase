@@ -1,0 +1,22 @@
+﻿@using MediaDatabase.Web.Models
+@model ScanModel
+@{
+    ViewBag.Title = "Scan";
+}
+<div class="jumbotron">
+    <h1>Scan Media</h1>
+    <p class="lead">Select media path to scan.</p>
+</div>
+<div class="container">
+@using (Html.BeginForm())
+{
+    <h2>@Html.DropDownList("Path", Model.Drives) <input type="submit" value="Scan" /></h2>
+}
+</div>
+@section styles {
+    <style>
+        select {
+            max-width: none;
+        }
+    </style>
+}

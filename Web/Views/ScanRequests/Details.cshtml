@@ -1,0 +1,34 @@
+﻿@using MediaDatabase.Entities
+@model ScanRequest
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div>
+    <h4>ScanRequest</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.VolumeName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VolumeName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StatusName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StatusName)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

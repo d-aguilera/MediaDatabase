@@ -1,0 +1,54 @@
+﻿@{
+    ViewBag.Title = "Scan Progress";
+}
+<div class="jumbotron">
+    <h1>@ViewBag.Title</h1>
+</div>
+<div class="container">
+    <!-- ko with: SignalRManager.connection -->
+    <div data-bind="visible: status() != 2, text: statusDescription()" style="float: right"></div>
+    <!-- /ko -->
+    <h2 data-bind="text: overallStatusSummary()"></h2>
+    <div data-bind="visible: overallStatus() > 0">
+        <div id="progressBar">
+            <div data-bind="attr: getBarAttrBinding()"></div></div>
+@using (Html.BeginForm("Cancel", "Home"))
+{
+    <div>
+        <input type="submit" value="Cancel" /></div>
+}
+        <h3>
+            <span>Scanned files:</span>
+            <span data-bind="text: scanning.items()"></span>
+            <span data-bind="attr: discovery.icon()"></span>
+        </h3>
+        <h3>
+            <span>Discovered media files:</span>
+            <span data-bind="text: discovery.items()"></span>
+            <span data-bind="visible: discovery.bytes() > 0, text: '(' + discovery.bytesFormatted() + ')'"></span>
+            <span data-bind="attr: discovery.icon()"></span>
+        </h3>
+        <h3>
+            <span>Hashed media files:</span>
+            <span data-bind="text: hashing.items()"></span>
+            <span data-bind="visible: hashing.bytes() > 0, text: '(' + hashing.bytesFormatted() + ')'"></span>
+            <span data-bind="attr: hashing.icon()"></span>
+        </h3>
+    </div>
+</div>
+@section styles {
+@Styles.Render(
+    "~/Content/App/Home/ScanProgress.css"
+)
+}
+@section scripts {
+@Scripts.Render(
+    "~/Scripts/knockout-3.4.0.js",
+    "~/Scripts/jquery.signalR-2.2.0.min.js",
+    "~/Scripts/App/Math.js",
+    "~/Scripts/App/Static.js",
+    "~/Scripts/App/SignalRManager.js",
+    "~/Scripts/App/Home/ScanProgressViewModel.js",
+    "~/Scripts/App/Home/ScanProgress.js"
+)
+}

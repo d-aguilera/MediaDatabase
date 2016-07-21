@@ -1,0 +1,545 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="MediaDatabase.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ContentFiles">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VolumeId" Type="int" Nullable="false" />
+          <Property Name="Path" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ContentId" Type="int" Nullable="false" />
+          <Property Name="CreationTimeUtc" Type="datetime" Nullable="false" />
+          <Property Name="LastWriteTimeUtc" Type="datetime" Nullable="false" />
+          <Property Name="Created" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="LastUpdated" Type="datetimeoffset" Precision="7" />
+        </EntityType>
+        <EntityType Name="Contents">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ContentType" Type="varchar" MaxLength="128" />
+          <Property Name="Hash" Type="varchar" MaxLength="32" Nullable="false" />
+          <Property Name="Created" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="LastUpdated" Type="datetimeoffset" Precision="7" />
+        </EntityType>
+        <EntityType Name="IgnoredFolders">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VolumeId" Type="int" Nullable="false" />
+          <Property Name="Path" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Media">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Caption" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="Size" Type="bigint" Nullable="false" />
+          <Property Name="SerialNumber" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="MediaTypeId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MediaTypes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="64" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Partitions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MediumId" Type="int" Nullable="false" />
+          <Property Name="Caption" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="DiskIndex" Type="int" Nullable="false" />
+          <Property Name="PartitionIndex" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ScanRequests">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VolumeName" Type="varchar" MaxLength="32" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="Created" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="LastUpdated" Type="datetimeoffset" Precision="7" />
+        </EntityType>
+        <EntityType Name="Volumes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PartitionId" Type="int" Nullable="false" />
+          <Property Name="Caption" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="FileSystem" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="VolumeName" Type="varchar" MaxLength="32" Nullable="false" />
+          <Property Name="VolumeSerialNumber" Type="varchar" MaxLength="11" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_ContentFiles_Contents">
+          <End Role="Contents" Type="Self.Contents" Multiplicity="1" />
+          <End Role="ContentFiles" Type="Self.ContentFiles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contents">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ContentFiles">
+              <PropertyRef Name="ContentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ContentFiles_Volumes">
+          <End Role="Volumes" Type="Self.Volumes" Multiplicity="1" />
+          <End Role="ContentFiles" Type="Self.ContentFiles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Volumes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ContentFiles">
+              <PropertyRef Name="VolumeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IgnoredFolders_Volumes">
+          <End Role="Volumes" Type="Self.Volumes" Multiplicity="1" />
+          <End Role="IgnoredFolders" Type="Self.IgnoredFolders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Volumes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="IgnoredFolders">
+              <PropertyRef Name="VolumeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Media_MediaTypes">
+          <End Role="MediaTypes" Type="Self.MediaTypes" Multiplicity="1" />
+          <End Role="Media" Type="Self.Media" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MediaTypes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Media">
+              <PropertyRef Name="MediaTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Partitions_Media">
+          <End Role="Media" Type="Self.Media" Multiplicity="1" />
+          <End Role="Partitions" Type="Self.Partitions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Media">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Partitions">
+              <PropertyRef Name="MediumId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Volumes_Partitions">
+          <End Role="Partitions" Type="Self.Partitions" Multiplicity="1" />
+          <End Role="Volumes" Type="Self.Volumes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Partitions">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Volumes">
+              <PropertyRef Name="PartitionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="spContentFileSaveExBulk" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="spDequeueScanRequest" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="spEnsureVolume" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MediumCaption" Type="varchar" Mode="In" />
+          <Parameter Name="MediumSize" Type="bigint" Mode="In" />
+          <Parameter Name="MediumSerialNumber" Type="varchar" Mode="In" />
+          <Parameter Name="MediumTypeName" Type="varchar" Mode="In" />
+          <Parameter Name="PartitionCaption" Type="varchar" Mode="In" />
+          <Parameter Name="PartitionDiskIndex" Type="int" Mode="In" />
+          <Parameter Name="PartitionIndex" Type="int" Mode="In" />
+          <Parameter Name="VolumeCaption" Type="varchar" Mode="In" />
+          <Parameter Name="VolumeFileSystem" Type="varchar" Mode="In" />
+          <Parameter Name="VolumeName" Type="varchar" Mode="In" />
+          <Parameter Name="VolumeSerialNumber" Type="varchar" Mode="In" />
+          <Parameter Name="VolumeId" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="spPurgeContentFiles" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="VolumeId" Type="int" Mode="In" />
+          <Parameter Name="Path" Type="nvarchar" Mode="In" />
+          <Parameter Name="LastUpdatedBefore" Type="datetimeoffset" Mode="In" />
+        </Function>
+        <EntityContainer Name="MediaDatabaseStoreContainer">
+          <EntitySet Name="ContentFiles" EntityType="Self.ContentFiles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Contents" EntityType="Self.Contents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="IgnoredFolders" EntityType="Self.IgnoredFolders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Media" EntityType="Self.Media" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MediaTypes" EntityType="Self.MediaTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Partitions" EntityType="Self.Partitions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ScanRequests" EntityType="Self.ScanRequests" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Volumes" EntityType="Self.Volumes" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ContentFiles_Contents" Association="Self.FK_ContentFiles_Contents">
+            <End Role="Contents" EntitySet="Contents" />
+            <End Role="ContentFiles" EntitySet="ContentFiles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ContentFiles_Volumes" Association="Self.FK_ContentFiles_Volumes">
+            <End Role="Volumes" EntitySet="Volumes" />
+            <End Role="ContentFiles" EntitySet="ContentFiles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IgnoredFolders_Volumes" Association="Self.FK_IgnoredFolders_Volumes">
+            <End Role="Volumes" EntitySet="Volumes" />
+            <End Role="IgnoredFolders" EntitySet="IgnoredFolders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Media_MediaTypes" Association="Self.FK_Media_MediaTypes">
+            <End Role="MediaTypes" EntitySet="MediaTypes" />
+            <End Role="Media" EntitySet="Media" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Partitions_Media" Association="Self.FK_Partitions_Media">
+            <End Role="Media" EntitySet="Media" />
+            <End Role="Partitions" EntitySet="Partitions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Volumes_Partitions" Association="Self.FK_Volumes_Partitions">
+            <End Role="Partitions" EntitySet="Partitions" />
+            <End Role="Volumes" EntitySet="Volumes" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="MediaDatabase.Model" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="MediaDatabaseContext" annotation:LazyLoadingEnabled="false" cg:TypeAccess="Internal">
+          <EntitySet Name="ContentFiles" EntityType="MediaDatabase.Model.ContentFile" />
+          <EntitySet Name="Contents" EntityType="MediaDatabase.Model.Content" />
+          <EntitySet Name="IgnoredFolders" EntityType="MediaDatabase.Model.IgnoredFolder" />
+          <EntitySet Name="Media" EntityType="MediaDatabase.Model.Medium" />
+          <EntitySet Name="MediaTypes" EntityType="MediaDatabase.Model.MediaType" cg:GetterAccess="Internal" />
+          <EntitySet Name="Partitions" EntityType="MediaDatabase.Model.Partition" />
+          <EntitySet Name="ScanRequests" EntityType="MediaDatabase.Model.ScanRequest" />
+          <EntitySet Name="Volumes" EntityType="MediaDatabase.Model.Volume" />
+          <AssociationSet Name="FK_ContentFiles_Contents" Association="MediaDatabase.Model.FK_ContentFiles_Contents">
+            <End Role="Content" EntitySet="Contents" />
+            <End Role="ContentFile" EntitySet="ContentFiles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ContentFiles_Volumes" Association="MediaDatabase.Model.FK_ContentFiles_Volumes">
+            <End Role="Volume" EntitySet="Volumes" />
+            <End Role="ContentFile" EntitySet="ContentFiles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IgnoredFolders_Volumes" Association="MediaDatabase.Model.FK_IgnoredFolders_Volumes">
+            <End Role="Volume" EntitySet="Volumes" />
+            <End Role="IgnoredFolder" EntitySet="IgnoredFolders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Media_MediaTypes" Association="MediaDatabase.Model.FK_Media_MediaTypes">
+            <End Role="MediaType" EntitySet="MediaTypes" />
+            <End Role="Medium" EntitySet="Media" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Partitions_Media" Association="MediaDatabase.Model.FK_Partitions_Media">
+            <End Role="Medium" EntitySet="Media" />
+            <End Role="Partition" EntitySet="Partitions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Volumes_Partitions" Association="MediaDatabase.Model.FK_Volumes_Partitions">
+            <End Role="Partition" EntitySet="Partitions" />
+            <End Role="Volume" EntitySet="Volumes" />
+          </AssociationSet>
+          <FunctionImport Name="spDequeueScanRequest" ReturnType="Collection(Int32)" />
+          <FunctionImport Name="spEnsureVolume">
+            <Parameter Name="MediumCaption" Mode="In" Type="String" />
+            <Parameter Name="MediumSize" Mode="In" Type="Int64" />
+            <Parameter Name="MediumSerialNumber" Mode="In" Type="String" />
+            <Parameter Name="MediumTypeName" Mode="In" Type="String" />
+            <Parameter Name="PartitionCaption" Mode="In" Type="String" />
+            <Parameter Name="PartitionDiskIndex" Mode="In" Type="Int32" />
+            <Parameter Name="PartitionIndex" Mode="In" Type="Int32" />
+            <Parameter Name="VolumeCaption" Mode="In" Type="String" />
+            <Parameter Name="VolumeFileSystem" Mode="In" Type="String" />
+            <Parameter Name="VolumeName" Mode="In" Type="String" />
+            <Parameter Name="VolumeSerialNumber" Mode="In" Type="String" />
+            <Parameter Name="VolumeId" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="spPurgeContentFiles">
+            <Parameter Name="VolumeId" Mode="In" Type="Int32" />
+            <Parameter Name="Path" Mode="In" Type="String" />
+            <Parameter Name="LastUpdatedBefore" Mode="In" Type="DateTimeOffset" />
+          </FunctionImport>
+        </EntityContainer>
+        <EntityType Name="ContentFile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Path" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="CreationTimeUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LastWriteTimeUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Created" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="LastUpdated" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="Content" Relationship="MediaDatabase.Model.FK_ContentFiles_Contents" FromRole="ContentFile" ToRole="Content" />
+          <NavigationProperty Name="Volume" Relationship="MediaDatabase.Model.FK_ContentFiles_Volumes" FromRole="ContentFile" ToRole="Volume" />
+        </EntityType>
+        <EntityType Name="Content">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ContentType" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="Hash" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="Created" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="LastUpdated" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="ContentFiles" Relationship="MediaDatabase.Model.FK_ContentFiles_Contents" FromRole="Content" ToRole="ContentFile" />
+        </EntityType>
+        <EntityType Name="IgnoredFolder">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Path" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Volume" Relationship="MediaDatabase.Model.FK_IgnoredFolders_Volumes" FromRole="IgnoredFolder" ToRole="Volume" />
+        </EntityType>
+        <EntityType Name="Medium">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Caption" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="Size" Type="Int64" Nullable="false" />
+          <Property Name="SerialNumber" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="MediaType" Relationship="MediaDatabase.Model.FK_Media_MediaTypes" FromRole="Medium" ToRole="MediaType" />
+          <NavigationProperty Name="Partitions" Relationship="MediaDatabase.Model.FK_Partitions_Media" FromRole="Medium" ToRole="Partition" />
+        </EntityType>
+        <EntityType Name="MediaType" cg:TypeAccess="Public">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Media" Relationship="MediaDatabase.Model.FK_Media_MediaTypes" FromRole="MediaType" ToRole="Medium" />
+        </EntityType>
+        <EntityType Name="Partition">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Caption" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="DiskIndex" Type="Int32" Nullable="false" />
+          <Property Name="PartitionIndex" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Medium" Relationship="MediaDatabase.Model.FK_Partitions_Media" FromRole="Partition" ToRole="Medium" />
+          <NavigationProperty Name="Volumes" Relationship="MediaDatabase.Model.FK_Volumes_Partitions" FromRole="Partition" ToRole="Volume" />
+        </EntityType>
+        <EntityType Name="ScanRequest">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VolumeName" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="Created" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="LastUpdated" Type="DateTimeOffset" Precision="7" />
+        </EntityType>
+        <EntityType Name="Volume">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Caption" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="FileSystem" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="VolumeName" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="VolumeSerialNumber" Type="String" Nullable="false" MaxLength="11" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ContentFiles" Relationship="MediaDatabase.Model.FK_ContentFiles_Volumes" FromRole="Volume" ToRole="ContentFile" />
+          <NavigationProperty Name="IgnoredFolders" Relationship="MediaDatabase.Model.FK_IgnoredFolders_Volumes" FromRole="Volume" ToRole="IgnoredFolder" />
+          <NavigationProperty Name="Partition" Relationship="MediaDatabase.Model.FK_Volumes_Partitions" FromRole="Volume" ToRole="Partition" />
+        </EntityType>
+        <Association Name="FK_ContentFiles_Contents">
+          <End Type="MediaDatabase.Model.Content" Role="Content" Multiplicity="1" />
+          <End Type="MediaDatabase.Model.ContentFile" Role="ContentFile" Multiplicity="*" />
+        </Association>
+        <Association Name="FK_ContentFiles_Volumes">
+          <End Type="MediaDatabase.Model.Volume" Role="Volume" Multiplicity="1" />
+          <End Type="MediaDatabase.Model.ContentFile" Role="ContentFile" Multiplicity="*" />
+        </Association>
+        <Association Name="FK_IgnoredFolders_Volumes">
+          <End Type="MediaDatabase.Model.Volume" Role="Volume" Multiplicity="1" />
+          <End Type="MediaDatabase.Model.IgnoredFolder" Role="IgnoredFolder" Multiplicity="*" />
+        </Association>
+        <Association Name="FK_Media_MediaTypes">
+          <End Type="MediaDatabase.Model.MediaType" Role="MediaType" Multiplicity="1" />
+          <End Type="MediaDatabase.Model.Medium" Role="Medium" Multiplicity="*" />
+        </Association>
+        <Association Name="FK_Partitions_Media">
+          <End Type="MediaDatabase.Model.Medium" Role="Medium" Multiplicity="1" />
+          <End Type="MediaDatabase.Model.Partition" Role="Partition" Multiplicity="*" />
+        </Association>
+        <Association Name="FK_Volumes_Partitions">
+          <End Type="MediaDatabase.Model.Partition" Role="Partition" Multiplicity="1" />
+          <End Type="MediaDatabase.Model.Volume" Role="Volume" Multiplicity="*" />
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="MediaDatabaseStoreContainer" CdmEntityContainer="MediaDatabaseContext">
+          <EntitySetMapping Name="ContentFiles">
+            <EntityTypeMapping TypeName="MediaDatabase.Model.ContentFile">
+              <MappingFragment StoreEntitySet="ContentFiles">
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="LastWriteTimeUtc" ColumnName="LastWriteTimeUtc" />
+                <ScalarProperty Name="CreationTimeUtc" ColumnName="CreationTimeUtc" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Path" ColumnName="Path" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Contents">
+            <EntityTypeMapping TypeName="MediaDatabase.Model.Content">
+              <MappingFragment StoreEntitySet="Contents">
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Hash" ColumnName="Hash" />
+                <ScalarProperty Name="ContentType" ColumnName="ContentType" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="IgnoredFolders">
+            <EntityTypeMapping TypeName="MediaDatabase.Model.IgnoredFolder">
+              <MappingFragment StoreEntitySet="IgnoredFolders">
+                <ScalarProperty Name="Path" ColumnName="Path" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Media">
+            <EntityTypeMapping TypeName="MediaDatabase.Model.Medium">
+              <MappingFragment StoreEntitySet="Media">
+                <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+                <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="Caption" ColumnName="Caption" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MediaTypes">
+            <EntityTypeMapping TypeName="MediaDatabase.Model.MediaType">
+              <MappingFragment StoreEntitySet="MediaTypes">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Partitions">
+            <EntityTypeMapping TypeName="MediaDatabase.Model.Partition">
+              <MappingFragment StoreEntitySet="Partitions">
+                <ScalarProperty Name="PartitionIndex" ColumnName="PartitionIndex" />
+                <ScalarProperty Name="DiskIndex" ColumnName="DiskIndex" />
+                <ScalarProperty Name="Caption" ColumnName="Caption" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ScanRequests">
+            <EntityTypeMapping TypeName="MediaDatabase.Model.ScanRequest">
+              <MappingFragment StoreEntitySet="ScanRequests">
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="VolumeName" ColumnName="VolumeName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Volumes">
+            <EntityTypeMapping TypeName="MediaDatabase.Model.Volume">
+              <MappingFragment StoreEntitySet="Volumes">
+                <ScalarProperty Name="VolumeSerialNumber" ColumnName="VolumeSerialNumber" />
+                <ScalarProperty Name="VolumeName" ColumnName="VolumeName" />
+                <ScalarProperty Name="FileSystem" ColumnName="FileSystem" />
+                <ScalarProperty Name="Caption" ColumnName="Caption" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="FK_ContentFiles_Contents" TypeName="MediaDatabase.Model.FK_ContentFiles_Contents" StoreEntitySet="ContentFiles">
+            <EndProperty Name="ContentFile">
+              <ScalarProperty Name="Id" ColumnName="Id" />
+            </EndProperty>
+            <EndProperty Name="Content">
+              <ScalarProperty Name="Id" ColumnName="ContentId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="FK_ContentFiles_Volumes" TypeName="MediaDatabase.Model.FK_ContentFiles_Volumes" StoreEntitySet="ContentFiles">
+            <EndProperty Name="ContentFile">
+              <ScalarProperty Name="Id" ColumnName="Id" />
+            </EndProperty>
+            <EndProperty Name="Volume">
+              <ScalarProperty Name="Id" ColumnName="VolumeId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="FK_IgnoredFolders_Volumes" TypeName="MediaDatabase.Model.FK_IgnoredFolders_Volumes" StoreEntitySet="IgnoredFolders">
+            <EndProperty Name="IgnoredFolder">
+              <ScalarProperty Name="Id" ColumnName="Id" />
+            </EndProperty>
+            <EndProperty Name="Volume">
+              <ScalarProperty Name="Id" ColumnName="VolumeId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="FK_Media_MediaTypes" TypeName="MediaDatabase.Model.FK_Media_MediaTypes" StoreEntitySet="Media">
+            <EndProperty Name="Medium">
+              <ScalarProperty Name="Id" ColumnName="Id" />
+            </EndProperty>
+            <EndProperty Name="MediaType">
+              <ScalarProperty Name="Id" ColumnName="MediaTypeId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="FK_Partitions_Media" TypeName="MediaDatabase.Model.FK_Partitions_Media" StoreEntitySet="Partitions">
+            <EndProperty Name="Partition">
+              <ScalarProperty Name="Id" ColumnName="Id" />
+            </EndProperty>
+            <EndProperty Name="Medium">
+              <ScalarProperty Name="Id" ColumnName="MediumId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="FK_Volumes_Partitions" TypeName="MediaDatabase.Model.FK_Volumes_Partitions" StoreEntitySet="Volumes">
+            <EndProperty Name="Volume">
+              <ScalarProperty Name="Id" ColumnName="Id" />
+            </EndProperty>
+            <EndProperty Name="Partition">
+              <ScalarProperty Name="Id" ColumnName="PartitionId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="spDequeueScanRequest" FunctionName="MediaDatabase.Store.spDequeueScanRequest" />
+          <FunctionImportMapping FunctionImportName="spEnsureVolume" FunctionName="MediaDatabase.Store.spEnsureVolume" />
+          <FunctionImportMapping FunctionImportName="spPurgeContentFiles" FunctionName="MediaDatabase.Store.spPurgeContentFiles" />
+        </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
